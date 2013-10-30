@@ -12,6 +12,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
@@ -22,7 +23,6 @@ import android.view.animation.TranslateAnimation;
 import android.widget.DatePicker;
 import android.widget.DatePicker.OnDateChangedListener;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TimePicker;
 import android.widget.TimePicker.OnTimeChangedListener;
 
@@ -434,26 +434,27 @@ public class DatePickerDialogContext extends FREContext {
 		
 		public void createContent(FREContext freContext,Context context, int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minute,boolean is24HourView, boolean hasMinMax, long minDate, long maxDate, int theme) 
 		{
-			RelativeLayout rl = new RelativeLayout(context);
-			
 			LinearLayout ll = new LinearLayout(context);
-			ll.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-			ll.setOrientation(LinearLayout.VERTICAL);
+			ll.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+			ll.setPadding(0, 0, 0, 5);
+			if (freContext.getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+				ll.setOrientation(LinearLayout.HORIZONTAL);
+			else
+				ll.setOrientation(LinearLayout.VERTICAL);
 			ll.setGravity(Gravity.CENTER_HORIZONTAL);
-			
-			timePicker = new TimePicker(context);
-			timePicker.setCurrentHour(hourOfDay);
-			timePicker.setCurrentMinute(minute);
-			timePicker.setIs24HourView(is24HourView);
-			timePicker.setOnTimeChangedListener(new MyOnTimeChangeListener(freContext));
-			ll.addView(timePicker);
 			
 			datePicker = new DatePicker(context);
 			datePicker.init(year, monthOfYear, dayOfMonth, new MyOnDateChangeListenr(freContext , hasMinMax, minDate, maxDate));
 			ll.addView(datePicker);
 			
-			rl.addView(ll);
-			setView(rl);
+			timePicker = new TimePicker(context);
+			timePicker.setIs24HourView(is24HourView);
+			timePicker.setCurrentHour(hourOfDay);
+			timePicker.setCurrentMinute(minute);
+			timePicker.setOnTimeChangedListener(new MyOnTimeChangeListener(freContext));
+			ll.addView(timePicker);
+			
+			setView(ll);
 		}
 		
 		public TimePicker getTimePicker(){
